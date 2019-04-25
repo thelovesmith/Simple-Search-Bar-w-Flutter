@@ -13,7 +13,9 @@ class MyApp extends StatelessWidget {
       home: MyHomePage(title: 'Flutter Demo Home Page'),
       routes: <String, WidgetBuilder>{
         "/search": (BuildContext context) =>
-            SearchBarExample(title: "Search Bar"),
+            SearchBarExample(title: "Star  Wars Characters"), 
+        "/planets": (BuildContext context) => 
+            SearchBarExample(title: "Star Wars Planets"),
       },
     );
   }
@@ -120,11 +122,15 @@ class _SearchBarExampleState extends State<SearchBarExample> {
 
   List names = new List(); //names we get from the STarWars API
 
+  List planets = new List(); //
+
   List filteredNames = new List(); // Names filteed by search text
+
+  List filteredPlanets = new List(); 
 
   Icon _searchIcon = new Icon(Icons.search);
 
-  Widget _appBarTitle = new Text('Search Example');
+  Widget _appBarTitle = new Text(title);
 
   // We have to override the default TextController constructor for the state so that it listens for wether there is text in the search bar, and if there is, set the _searchText String to the TExtController input so we can filter the list accordingly.
   _SearchBarExampleState() {
@@ -141,9 +147,12 @@ class _SearchBarExampleState extends State<SearchBarExample> {
       }
     });
   }
+
+  static String get title => title;
   @override
   void initState() {
     this._getNames();
+    this._getPlanets();
     super.initState();
   }
 
@@ -168,6 +177,11 @@ class _SearchBarExampleState extends State<SearchBarExample> {
     for (var i = 0; i < response.data['results'].length; i++) {
       tempPlanetList.add(response.data['results'][i]);
     }
+    setState(() {
+      planets = tempPlanetList;
+      filteredPlanets = planets;
+      print(planets);
+    });
   }
 
 // this is the callback function for the Seacrh button in the scaffold app bar
@@ -202,7 +216,12 @@ class _SearchBarExampleState extends State<SearchBarExample> {
         title: _appBarTitle,
       ),
       body: Container(
-        child: _buildList(),
+        child: title == "Star  Wars Characters" ? _buildList() : _buildPlanetList(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => {Navigator.pushNamed(context, '/planets')},
+        tooltip: 'Planets',
+        child: Icon(Icons.navigate_next),
       ),
     );
   }
@@ -243,7 +262,14 @@ class _SearchBarExampleState extends State<SearchBarExample> {
       filteredNames = tempPlanetList;
     }
     return ListView.builder(
-      
+      itemCount: planets == null ? 0 : filteredPlanets.length,
+      itemBuilder: (BuildContext context, int index) {
+        return new ListTile(
+          title: Text(filteredPlanets[index]['name']),
+          onTap: () => print(filteredPlanets[index]['name']),
+        );
+      },
+
     );
   }
 }
