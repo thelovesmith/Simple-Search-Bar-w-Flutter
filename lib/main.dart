@@ -11,8 +11,9 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData.dark(),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
-      routes: <String, WidgetBuilder> {
-        "/search": (BuildContext context) => SearchBarExample(title: "Search Bar"),
+      routes: <String, WidgetBuilder>{
+        "/search": (BuildContext context) =>
+            SearchBarExample(title: "Search Bar"),
       },
     );
   }
@@ -103,30 +104,29 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-
-class SearchBarExample extends StatefulWidget{
-  SearchBarExample({Key key, this.title }) : super(key: key);
+class SearchBarExample extends StatefulWidget {
+  SearchBarExample({Key key, this.title}) : super(key: key);
   @override
   _SearchBarExampleState createState() => _SearchBarExampleState();
   final String title;
 }
 
-class _SearchBarExampleState extends State<SearchBarExample>{
+class _SearchBarExampleState extends State<SearchBarExample> {
   final TextEditingController _filter = new TextEditingController();
 
   final dio = new Dio(); // for http requests
 
   String _searchText = "";
 
-  List names = new List(); //names we get from the STarWars API 
+  List names = new List(); //names we get from the STarWars API
 
-  List filteredNames = new List(); // Names filteed by search text 
+  List filteredNames = new List(); // Names filteed by search text
 
   Icon _searchIcon = new Icon(Icons.search);
 
   Widget _appBarTitle = new Text('Search Example');
 
-  // We have to override the default TextController constructor for the state so that it listens for wether there is text in the search bar, and if there is, set the _searchText String to the TExtController input so we can filter the list accordingly. 
+  // We have to override the default TextController constructor for the state so that it listens for wether there is text in the search bar, and if there is, set the _searchText String to the TExtController input so we can filter the list accordingly.
   _SearchBarExampleState() {
     _filter.addListener(() {
       if (_filter.text.isEmpty) {
@@ -147,72 +147,74 @@ class _SearchBarExampleState extends State<SearchBarExample>{
     super.initState();
   }
 
-
-  // this function instantiates the lists when the page loads 
-  //using dio you can easily make the api call then then use setState to override the initstate and assign our fetch results to the names and filteredNames lists 
+  // this function instantiates the lists when the page loads
+  //using dio you can easily make the api call then then use setState to override the initstate and assign our fetch results to the names and filteredNames lists
   void _getNames() async {
-  final response = await dio.get('https://swapi.co/api/people');
-  List tempList = new List();
-  for (var i = 0; i < response.data['results'].length; i++) {
-    tempList.add(response.data['results'][i]);
-  }
-  setState(() {
-    names = tempList;
-    filteredNames = names;
-    print(names);
-  });
-}
-
-// this is the callback function for the Seacrh button in the scaffold app bar 
-//Contains logic to activate textfield when search icon is pressed swicthes state based on that
-void _searchPressed() {
-  setState((){
-    if (this._searchIcon.icon == Icons.search) {
-      this._searchIcon = new Icon(Icons.close);
-      this._appBarTitle = new TextField(
-        controller: _filter,
-        decoration: new InputDecoration(
-          prefixIcon: new Icon(Icons.search),
-          hintText: 'Search......'
-        ),
-      );
-    } else {
-      this._searchIcon = new Icon(Icons.search);
-      this._appBarTitle = new Text('Search Example');
-      filteredNames = names;
-      _filter.clear();
+    final response = await dio.get('https://swapi.co/api/people');
+    List tempList = new List();
+    for (var i = 0; i < response.data['results'].length; i++) {
+      tempList.add(response.data['results'][i]);
     }
-  });
-}
+    setState(() {
+      names = tempList;
+      filteredNames = names;
+      print(names);
+    });
+  }
 
+  void _getPlanets() async {
+    final response = await dio.get('https://swapi.co/api/planets');
+    List tempPlanetList = new List();
+    for (var i = 0; i < response.data['results'].length; i++) {
+      tempPlanetList.add(response.data['results'][i]);
+    }
+  }
 
+// this is the callback function for the Seacrh button in the scaffold app bar
+//Contains logic to activate textfield when search icon is pressed swicthes state based on that
+  void _searchPressed() {
+    setState(() {
+      if (this._searchIcon.icon == Icons.search) {
+        this._searchIcon = new Icon(Icons.close);
+        this._appBarTitle = new TextField(
+          controller: _filter,
+          decoration: new InputDecoration(
+              prefixIcon: new Icon(Icons.search), hintText: 'Search......'),
+        );
+      } else {
+        this._searchIcon = new Icon(Icons.search);
+        this._appBarTitle = new Text('Search Example');
+        filteredNames = names;
+        _filter.clear();
+      }
+    });
+  }
 
-  
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
-       
       appBar: AppBar(
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.search),
           onPressed: _searchPressed,
-          ),
+        ),
         title: _appBarTitle,
-    ),
-    body: Container(
-      child: _buildList(),
-    ),
-    
+      ),
+      body: Container(
+        child: _buildList(),
+      ),
     );
   }
 
-  //THis widget builds a ListView with the resukts from filtering the list that we retrieve fron teh API fetch 
+  //THis widget builds a ListView with the resukts from filtering the list that we retrieve fron teh API fetch
   Widget _buildList() {
     if (!(_searchText.isEmpty)) {
       List tempList = new List();
-      for (int i = 0; i < filteredNames.length; i ++) {
-        if(filteredNames[i]['name'].toLowerCase().contains(_searchText.toLowerCase())){
+      for (int i = 0; i < filteredNames.length; i++) {
+        if (filteredNames[i]['name']
+            .toLowerCase()
+            .contains(_searchText.toLowerCase())) {
           tempList.add(filteredNames[i]);
         }
       }
@@ -228,8 +230,4 @@ void _searchPressed() {
       },
     );
   }
-  
-
-
 }
-
