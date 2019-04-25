@@ -143,6 +143,7 @@ class _SearchBarExampleState extends State<SearchBarExample> {
         setState(() {
           _searchText = '';
           filteredNames = names;
+          filteredPlanets = planets;
         });
       } else {
         setState(() {
@@ -155,7 +156,7 @@ class _SearchBarExampleState extends State<SearchBarExample> {
   
   @override
   void initState() {
-    
+    title = widget.title;
     this._getPlanets();
     this._getNames();
     super.initState();
@@ -198,15 +199,18 @@ class _SearchBarExampleState extends State<SearchBarExample> {
     setState(() {
       if (this._searchIcon.icon == Icons.search) {
         this._searchIcon = new Icon(Icons.close);
+        title = widget.title;
         this._appBarTitle = new TextField(
           controller: _filter,
           decoration: new InputDecoration(
               prefixIcon: new Icon(Icons.search), hintText: 'Search......'),
         );
       } else {
+        title = widget.title;
         this._searchIcon = new Icon(Icons.search);
-        this._appBarTitle = new Text('Search Example');
+        this._appBarTitle = _appBarTitle;
         filteredNames = names;
+        filteredPlanets = planets;
         _filter.clear();
       }
     });
@@ -224,7 +228,7 @@ class _SearchBarExampleState extends State<SearchBarExample> {
         title: _appBarTitle,
       ),
       body: Container(
-        child: widget.title == "Star Wars Characters" ? _buildList() : _buildPlanetList(),
+        child: title == "Star Wars Characters" ?     _buildList() : _buildPlanetList(),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => {
@@ -252,12 +256,12 @@ class _SearchBarExampleState extends State<SearchBarExample> {
     });
     if (!(_searchText.isEmpty)) {
       List tempPlanetList = new List();
-      for (int i = 0; i < filteredNames.length; i++){
-        if (filteredNames[i]['name'].toLowerCase().contains(_searchText.toLowerCase())){
-          tempPlanetList.add(filteredNames[i]);
+      for (int i = 0; i < filteredPlanets.length; i++){
+        if (filteredPlanets[i]['name'].toLowerCase().contains(_searchText.toLowerCase())){
+          tempPlanetList.add(filteredPlanets[i]);
         }
       }
-      filteredNames = tempPlanetList;
+      filteredPlanets = tempPlanetList;
     }
     return ListView.builder(
       itemCount: planets == null ? 0 : filteredPlanets.length,
