@@ -212,7 +212,7 @@ class _SearchBarExampleState extends State<SearchBarExample> {
     if (!(_searchText.isEmpty)) {
       List tempList = new List();
       for (int i = 0; i < filteredNames.length; i++) {
-        if (filteredNames[i]['name']
+        if (filteredNames[i]['name']       
             .toLowerCase()
             .contains(_searchText.toLowerCase())) {
           tempList.add(filteredNames[i]);
@@ -228,6 +228,22 @@ class _SearchBarExampleState extends State<SearchBarExample> {
           onTap: () => print(filteredNames[index]['name']),
         );
       },
+    );
+  }
+
+  //THI SIS THE WIDGET THAT BUILDS THE PLANET LIST 
+  Widget _buildPlanetList() {
+    if (!(_searchText.isEmpty)) {
+      List tempPlanetList = new List();
+      for (int i = 0; i < filteredNames.length; i++){
+        if (filteredNames[i]['name'].toLowerCase().contains(_searchText.toLowerCase())){
+          tempPlanetList.add(filteredNames[i]);
+        }
+      }
+      filteredNames = tempPlanetList;
+    }
+    return ListView.builder(
+      
     );
   }
 }
