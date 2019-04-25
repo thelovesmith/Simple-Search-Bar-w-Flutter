@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       home: MyHomePage(title: 'Flutter Demo Home Page'),
       routes: <String, WidgetBuilder>{
         "/search": (BuildContext context) =>
-            SearchBarExample(title: "Star  Wars Characters"), 
+            SearchBarExample(title: "Star Wars Characters"), 
         "/planets": (BuildContext context) => 
             SearchBarExample(title: "Star Wars Planets"),
       },
@@ -107,9 +107,11 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class SearchBarExample extends StatefulWidget {
-  SearchBarExample({Key key, this.title}) : super(key: key);
+
+  SearchBarExample({Key key, this.title }) : super(key: key);
   @override
   _SearchBarExampleState createState() => _SearchBarExampleState();
+  
   final String title;
 }
 
@@ -130,6 +132,8 @@ class _SearchBarExampleState extends State<SearchBarExample> {
 
   Icon _searchIcon = new Icon(Icons.search);
 
+  static String title = "Star Wars Characters";
+
   Widget _appBarTitle = new Text(title);
 
   // We have to override the default TextController constructor for the state so that it listens for wether there is text in the search bar, and if there is, set the _searchText String to the TExtController input so we can filter the list accordingly.
@@ -148,11 +152,12 @@ class _SearchBarExampleState extends State<SearchBarExample> {
     });
   }
 
-  static String get title => title;
+  
   @override
   void initState() {
-    this._getNames();
+    
     this._getPlanets();
+    this._getNames();
     super.initState();
   }
 
@@ -167,7 +172,9 @@ class _SearchBarExampleState extends State<SearchBarExample> {
     setState(() {
       names = tempList;
       filteredNames = names;
+      print('getnames');
       print(names);
+
     });
   }
 
@@ -180,6 +187,7 @@ class _SearchBarExampleState extends State<SearchBarExample> {
     setState(() {
       planets = tempPlanetList;
       filteredPlanets = planets;
+      print('getplanets');
       print(planets);
     });
   }
@@ -216,18 +224,59 @@ class _SearchBarExampleState extends State<SearchBarExample> {
         title: _appBarTitle,
       ),
       body: Container(
-        child: title == "Star  Wars Characters" ? _buildList() : _buildPlanetList(),
+        child: widget.title == "Star Wars Characters" ? _buildList() : _buildPlanetList(),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => {Navigator.pushNamed(context, '/planets')},
+        onPressed: () => {
+          title == "Star Wars Characters" ? 
+          Navigator.pushNamed(context, '/planets') 
+          :
+          Navigator.pushNamed(context, '/search')
+          },
         tooltip: 'Planets',
         child: Icon(Icons.navigate_next),
       ),
     );
   }
 
+  
+
+  //THI SIS THE WIDGET THAT BUILDS THE PLANET LIST 
+  Widget _buildPlanetList() {
+    setState(() {
+      title = widget.title;
+      print(widget.title);
+      print('planetssss buildersss');
+      print('title');
+      print(title);
+    });
+    if (!(_searchText.isEmpty)) {
+      List tempPlanetList = new List();
+      for (int i = 0; i < filteredNames.length; i++){
+        if (filteredNames[i]['name'].toLowerCase().contains(_searchText.toLowerCase())){
+          tempPlanetList.add(filteredNames[i]);
+        }
+      }
+      filteredNames = tempPlanetList;
+    }
+    return ListView.builder(
+      itemCount: planets == null ? 0 : filteredPlanets.length,
+      itemBuilder: (BuildContext context, int index) {
+        return new ListTile(
+          title: Text(filteredPlanets[index]['name']),
+          onTap: () => print(filteredPlanets[index]['name']),
+        );
+      },
+
+    );
+  }
   //THis widget builds a ListView with the resukts from filtering the list that we retrieve fron teh API fetch
   Widget _buildList() {
+    setState(() {
+      title = widget.title;
+      print(widget.title);
+      print('namessss builderss');
+    });
     if (!(_searchText.isEmpty)) {
       List tempList = new List();
       for (int i = 0; i < filteredNames.length; i++) {
@@ -247,29 +296,6 @@ class _SearchBarExampleState extends State<SearchBarExample> {
           onTap: () => print(filteredNames[index]['name']),
         );
       },
-    );
-  }
-
-  //THI SIS THE WIDGET THAT BUILDS THE PLANET LIST 
-  Widget _buildPlanetList() {
-    if (!(_searchText.isEmpty)) {
-      List tempPlanetList = new List();
-      for (int i = 0; i < filteredNames.length; i++){
-        if (filteredNames[i]['name'].toLowerCase().contains(_searchText.toLowerCase())){
-          tempPlanetList.add(filteredNames[i]);
-        }
-      }
-      filteredNames = tempPlanetList;
-    }
-    return ListView.builder(
-      itemCount: planets == null ? 0 : filteredPlanets.length,
-      itemBuilder: (BuildContext context, int index) {
-        return new ListTile(
-          title: Text(filteredPlanets[index]['name']),
-          onTap: () => print(filteredPlanets[index]['name']),
-        );
-      },
-
     );
   }
 }
